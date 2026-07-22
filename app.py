@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 
 # 1. CONEXIÓN A LA BASE servidor 2
 # Nota: La contraseña y el puerto deben coincidir con la config de tu grupo
-engine_bi = create_engine('mysql+pymysql://root:password_local@localhost:3306/bi_db')
+engine_bi = create_engine('mysql+pymysql://etl_local:Proceso2026!@100.108.10.35:3306/bi_db')
 
 def cargar_datos():
     try:
