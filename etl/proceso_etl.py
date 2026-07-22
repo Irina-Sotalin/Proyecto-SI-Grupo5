@@ -94,7 +94,7 @@ def ejecutar_etl():
         print("¡Proceso ETL completado exitosamente!")
         
     except Exception as e:
-        print(f"❌ ERROR CRÍTICO EN EL PROCESO ETL: {str(e)}", file=sys.stderr)
+        print(f"ERROR CRÍTICO EN EL PROCESO ETL: {str(e)}", file=sys.stderr)
         sys.exit(1)
 
 if __name__ == "__main__":
