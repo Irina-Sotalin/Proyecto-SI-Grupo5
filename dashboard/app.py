@@ -44,19 +44,19 @@ app_ui = ui.page_fluid(
         ui.value_box(
             "Total de Selecciones",
             str(total_selecciones),
-            showcase="🌎"
+            showcase=""
         ),
 
         ui.value_box(
             "Victorias Totales",
             str(total_victorias),
-            showcase="🏆"
+            showcase=""
         ),
 
         ui.value_box(
             "Promedio Índice",
             str(promedio_indice),
-            showcase="📈"
+            showcase=""
         )
     ),
 
