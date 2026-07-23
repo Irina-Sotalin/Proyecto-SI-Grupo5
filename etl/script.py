@@ -40,7 +40,7 @@ except Exception as e:
 # 2. Conexión a la base de datos MySQL (Servidor 2 Oficial)
 try:
     conexion = mysql.connector.connect(
-        host="100.108.10.35",
+        host="100.108.153.6",
         user="etl_local",
         password="Proceso2026!",
         database="bi_db",
