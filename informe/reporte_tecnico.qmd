@@ -1,0 +1,74 @@
+---
+title: "Informe Técnico: Sistema de Análisis e Inteligencia de Negocios - FIFA"
+author: "Grupo 5 (Roxana, Alex, Jesús, Giovanni, Irini)"
+date: "2026-07-21"
+format: 
+  pdf:
+    geometry: "margin=1in"
+    toc: true
+    number-sections: true
+---
+
+# 1. Objetivos del Proyecto (Valor: 1 pt)
+
+## Objetivo General
+Implementar un sistema automatizado de extracción, transformación y carga (ETL) utilizando Python, MySQL y Apache Airflow, conectado a un Dashboard BI funcional basado en los datos históricos de la Copa Mundial de Fútbol (Kaggle), garantizando la centralización y disponibilidad de KPIs clave para la toma de decisiones.
+
+## Objetivos Específicos
+* Configurar una arquitectura de red y bases de datos distribuidas entre los servidores del equipo (Servidor 1 de Negocio y Servidor 2 de BI).
+* Desarrollar un script parametrizado en Python que extraiga datos históricos, aplique filtros dinámicos y calcule indicadores de rendimiento deportivo.
+* Automatizar el flujo de trabajo mediante Apache Airflow para garantizar la ejecución programada e idempotente del proceso ETL.
+* Generar la exportación automática de reportes analíticos en formatos físicos al finalizar el ciclo de procesamiento de datos.
+* Diseñar un Dashboard interactivo que permita visualizar de forma clara y dinámica los KPIs calculados a través de componentes especializados.
+
+# 2. Arquitectura y Diseño de la Solución (Valor: 1.5 pts)
+
+## Diagrama de Arquitectura
+[*** ESPACIO PENDIENTE - SE PONE EN LA FASE 2 ***]
+![Arquitectura General del Sistema Distribuido](imagenes/arquitectura.png){width=90% fig-align="center"}
+
+## Explicación del Flujo ETL
+El sistema opera bajo un modelo distribuido compuesto por dos servidores virtuales en Linux (Ubuntu):
+
+1. **Servidor 1 (Origen - Roxana):** Aloja la base de datos de producción `fifa_db` con los datos históricos crudos de los mundiales.
+2. **Servidor 2 (Destino y Parámetros - Alex):** Aloja la base de datos de parámetros (`parametros_db`) y el repositorio final de Inteligencia de Negocios (`bi_db`).
+
+El flujo inicia cuando el script de Python se conecta de forma remota al Servidor 1. Extrae los datos históricos de las selecciones utilizando la librería `SQLAlchemy`. Posteriormente, el script lee la configuración local del Servidor 2 para aplicar las reglas de negocio, procesa las transformaciones mediante `Pandas`, calcula los KPIs específicos y realiza una carga limpia (sobrescribiendo las tablas) en el Servidor 2. Todo este flujo es orquestado de forma automática por Apache Airflow.
+
+# 3. Explicación Técnico-Analítica (Valor: 1 pt)
+
+## Uso de Parámetros de Configuración Dynamic
+Para evitar que el código sea rígido, las métricas se ajustan dinámicamente consultando la tabla `configuracion` en la base de datos `parametros_db`. Los parámetros utilizados son:
+
+* `year_from`: Filtra los datos para procesar únicamente registros a partir de un año específico (ej. 1990).
+* `top_n`: Define el límite de selecciones que se mostrarán en los rankings principales (ej. Top 10).
+* `min_avg_goals`: Umbral mínimo de promedio de goles por partido para clasificar a una selección dentro del perfil ofensivo.
+
+## Cálculo de los KPIs Solicitados
+El proceso de transformación calcula los siguientes indicadores clave:
+
+1. **Porcentaje de Victorias (`kpi_ranking`):** Sumatoria de victorias dividida entre el total de partidos jugados en los últimos 4 años por cada equipo, ordenado de forma descendente para obtener el Top N.
+2. **Perfil Ofensivo (`kpi_ofensiva`):** Filtrado de selecciones cuyo promedio de goles anotados por partido supera el valor asignado en `min_avg_goals`.
+3. **Evolución Histórica (`kpi_evolucion`):** Agrupación por año/versión del mundial para identificar el total de goles anotados, el promedio general de anotaciones por partido y la cantidad de países participantes.
+4. **Índice de Rendimiento (`kpi_rendimiento`):** Ponderación que otorga 3 puntos por victoria y 1 por empate, dividida entre los partidos jugados, extrayendo las 5 selecciones más eficientes de la historia.
+
+## Decisiones de Implementación e Idempotencia
+Se optó por utilizar la función `.to_sql()` con la propiedad `if_exists='replace'` de Pandas. Esta decisión técnica garantiza la **idempotencia** del sistema: no importa cuántas veces se ejecute el script, las tablas de los KPIs se reinician y se vuelven a poblar con datos actualizados sin duplicar filas ni corromper el histórico del Dashboard. Asimismo, el sistema genera de forma autónoma un archivo CSV local tras cada ciclo exitoso, cumpliendo con la directiva de exportación automatizada de reportes.
+
+# 4. Evidencias de Ejecución (Valor: 1 pt)
+
+[*** NOTA IMPORTANTE PARA EVALUACIÓN: SECCIÓN EN PAUSA ***]
+*Los elementos de esta sección se completarán en la Fase 2, una vez que Alex ejecute el ETL, Irina monte Airflow y Jesús publique el Dashboard.*
+
+## Evidencia 1: Ejecución del Script ETL y Generación de Reportes
+![Consola de comandos demostrando el éxito del script y la exportación del reporte](imagenes/captura_consola.png){width=85% fig-align="center"}
+
+## Evidencia 2: Tablas de KPIs Pobladas en MySQL (Servidor 2)
+![Verificación de las tablas de KPIs creadas y pobladas en el Servidor 2](imagenes/tablas_bi.png){width=85% fig-align="center"}
+
+## Evidencia 3: Dashboard BI con Mapas Especializados
+![Panel de Control funcional integrando visualizaciones interactivas avanzadas y mapas coropléticos](imagenes/dashboard.png){width=85% fig-align="center"}
+
+# 5. Conclusiones y Formato (Valor: 0.5 pts)
+
+La implementación de esta arquitectura distribuida demuestra que la separación de entornos (producción vs. analítica) previene la sobrecarga de los sistemas de negocio. La automatización mediante Apache Airflow y las visualizaciones interactivas geoespaciales (mapas) aseguran que el Dashboard BI siempre disponga de información confiable, limpia y estructurada bajo estándares técnicos profesionales de ingeniería de sistemas.
