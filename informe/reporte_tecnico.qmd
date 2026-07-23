@@ -1,7 +1,13 @@
 ---
 title: "Informe Técnico: Sistema de Análisis e Inteligencia de Negocios - FIFA"
-author: "Grupo 5 (Roxana, Alex, Jesús, Giovanni, Irini)"
-date: "2026-07-21"
+author: |
+  Grupo 5
+  
+  Alex Monta  
+  Diego Pacheco  
+  Lesly Sangurima  
+  Irina Sotalin
+date: "2026-07-23"
 format: 
   pdf:
     geometry: "margin=1in"
@@ -9,66 +15,139 @@ format:
     number-sections: true
 ---
 
-# 1. Objetivos del Proyecto (Valor: 1 pt)
+# 1. Objetivos del Proyecto 
 
 ## Objetivo General
-Implementar un sistema automatizado de extracción, transformación y carga (ETL) utilizando Python, MySQL y Apache Airflow, conectado a un Dashboard BI funcional basado en los datos históricos de la Copa Mundial de Fútbol (Kaggle), garantizando la centralización y disponibilidad de KPIs clave para la toma de decisiones.
+
+Implementar un sistema de Inteligencia de Negocios basado en un proceso ETL automatizado para el análisis de datos históricos de la Copa Mundial de Fútbol, permitiendo la extracción, transformación y carga de información mediante Python y MySQL, con la finalidad de generar indicadores clave de rendimiento (KPIs) y visualizarlos mediante un Dashboard BI interactivo para facilitar el análisis deportivo.
 
 ## Objetivos Específicos
-* Configurar una arquitectura de red y bases de datos distribuidas entre los servidores del equipo (Servidor 1 de Negocio y Servidor 2 de BI).
-* Desarrollar un script parametrizado en Python que extraiga datos históricos, aplique filtros dinámicos y calcule indicadores de rendimiento deportivo.
-* Automatizar el flujo de trabajo mediante Apache Airflow para garantizar la ejecución programada e idempotente del proceso ETL.
-* Generar la exportación automática de reportes analíticos en formatos físicos al finalizar el ciclo de procesamiento de datos.
-* Diseñar un Dashboard interactivo que permita visualizar de forma clara y dinámica los KPIs calculados a través de componentes especializados.
+
+* Diseñar una arquitectura distribuida utilizando bases de datos y servidores independientes para separar la información operativa del procesamiento analítico.
+
+* Implementar un proceso ETL mediante Python que permita extraer datos históricos de la FIFA, aplicar transformaciones y calcular indicadores de rendimiento deportivo.
+
+* Utilizar parámetros de configuración dinámicos para controlar el procesamiento de datos y evitar valores definidos directamente dentro del código fuente.
+
+* Automatizar la ejecución del flujo de procesamiento mediante herramientas de orquestación, garantizando una ejecución organizada y repetible del proceso ETL.
+
+* Construir un Dashboard BI interactivo que permita visualizar los KPIs generados mediante gráficos especializados y elementos visuales para el análisis de resultados históricos.
 
 # 2. Arquitectura y Diseño de la Solución (Valor: 1.5 pts)
 
 ## Diagrama de Arquitectura
-[*** ESPACIO PENDIENTE - SE PONE EN LA FASE 2 ***]
+
 ![Arquitectura General del Sistema Distribuido](imagenes/arquitectura.png){width=90% fig-align="center"}
 
 ## Explicación del Flujo ETL
-El sistema opera bajo un modelo distribuido compuesto por dos servidores virtuales en Linux (Ubuntu):
 
-1. **Servidor 1 (Origen - Roxana):** Aloja la base de datos de producción `fifa_db` con los datos históricos crudos de los mundiales.
-2. **Servidor 2 (Destino y Parámetros - Alex):** Aloja la base de datos de parámetros (`parametros_db`) y el repositorio final de Inteligencia de Negocios (`bi_db`).
+La solución implementada utiliza una arquitectura distribuida compuesta por servidores Linux Ubuntu, bases de datos MySQL y herramientas de procesamiento desarrolladas en Python.
 
-El flujo inicia cuando el script de Python se conecta de forma remota al Servidor 1. Extrae los datos históricos de las selecciones utilizando la librería `SQLAlchemy`. Posteriormente, el script lee la configuración local del Servidor 2 para aplicar las reglas de negocio, procesa las transformaciones mediante `Pandas`, calcula los KPIs específicos y realiza una carga limpia (sobrescribiendo las tablas) en el Servidor 2. Todo este flujo es orquestado de forma automática por Apache Airflow.
+El flujo general del sistema se divide en las siguientes etapas:
+
+1. **Extracción de datos:**
+
+   El proceso ETL inicia mediante la conexión hacia la base de datos que contiene la información histórica de la Copa Mundial de Fútbol. Los datos son extraídos utilizando Python junto con librerías de conexión a bases de datos, permitiendo obtener la información necesaria para el análisis.
+
+2. **Transformación de datos:**
+
+   Una vez obtenidos los datos, se aplican procesos de limpieza, filtrado y transformación utilizando la librería Pandas. En esta etapa se calculan los indicadores clave de rendimiento (KPIs), como estadísticas de victorias e índices de rendimiento de las selecciones.
+
+3. **Carga de información analítica:**
 
 # 3. Explicación Técnico-Analítica (Valor: 1 pt)
 
-## Uso de Parámetros de Configuración Dynamic
-Para evitar que el código sea rígido, las métricas se ajustan dinámicamente consultando la tabla `configuracion` en la base de datos `parametros_db`. Los parámetros utilizados son:
+## Proceso ETL Implementado
 
-* `year_from`: Filtra los datos para procesar únicamente registros a partir de un año específico (ej. 1990).
-* `top_n`: Define el límite de selecciones que se mostrarán en los rankings principales (ej. Top 10).
-* `min_avg_goals`: Umbral mínimo de promedio de goles por partido para clasificar a una selección dentro del perfil ofensivo.
+El sistema desarrollado implementa un proceso ETL (Extract, Transform, Load) encargado de obtener información histórica de la Copa Mundial de Fútbol, procesarla y almacenarla en una base de datos analítica para su posterior visualización mediante un Dashboard BI.
 
-## Cálculo de los KPIs Solicitados
-El proceso de transformación calcula los siguientes indicadores clave:
+La etapa de **extracción** consiste en la obtención de los datos históricos almacenados en la base de datos FIFA. Mediante scripts desarrollados en Python se realiza la conexión hacia la fuente de información y se recuperan los registros necesarios para el análisis de rendimiento de las selecciones.
 
-1. **Porcentaje de Victorias (`kpi_ranking`):** Sumatoria de victorias dividida entre el total de partidos jugados en los últimos 4 años por cada equipo, ordenado de forma descendente para obtener el Top N.
-2. **Perfil Ofensivo (`kpi_ofensiva`):** Filtrado de selecciones cuyo promedio de goles anotados por partido supera el valor asignado en `min_avg_goals`.
-3. **Evolución Histórica (`kpi_evolucion`):** Agrupación por año/versión del mundial para identificar el total de goles anotados, el promedio general de anotaciones por partido y la cantidad de países participantes.
-4. **Índice de Rendimiento (`kpi_rendimiento`):** Ponderación que otorga 3 puntos por victoria y 1 por empate, dividida entre los partidos jugados, extrayendo las 5 selecciones más eficientes de la historia.
+En la etapa de **transformación**, los datos obtenidos son procesados utilizando librerías especializadas como Pandas. Durante esta fase se aplican filtros, limpieza de información y cálculos estadísticos necesarios para generar indicadores de rendimiento deportivo. Además, se utilizan parámetros de configuración para controlar dinámicamente las reglas del procesamiento.
 
-## Decisiones de Implementación e Idempotencia
-Se optó por utilizar la función `.to_sql()` con la propiedad `if_exists='replace'` de Pandas. Esta decisión técnica garantiza la **idempotencia** del sistema: no importa cuántas veces se ejecute el script, las tablas de los KPIs se reinician y se vuelven a poblar con datos actualizados sin duplicar filas ni corromper el histórico del Dashboard. Asimismo, el sistema genera de forma autónoma un archivo CSV local tras cada ciclo exitoso, cumpliendo con la directiva de exportación automatizada de reportes.
+La etapa de **carga** permite almacenar los resultados procesados dentro de la base de datos analítica `bi_db`, donde se encuentran las estructuras utilizadas posteriormente por el Dashboard BI para la generación de visualizaciones interactivas.
+
+## Control de Ejecuciones e Idempotencia
+
+El proceso ETL fue diseñado considerando el principio de idempotencia, permitiendo ejecutar nuevamente el flujo de procesamiento sin generar duplicidad de información ni afectar la consistencia de los datos almacenados.
+
+Para lograr este comportamiento, la carga de información analítica mantiene una estructura controlada de actualización de resultados. De esta manera, cuando el proceso se ejecuta nuevamente bajo los mismos parámetros de configuración, se obtiene el mismo resultado esperado.
+
+La aplicación de este principio facilita la automatización del proceso ETL mediante herramientas de orquestación, permitiendo realizar ejecuciones programadas de manera segura y confiable.
+
+## Uso de Parámetros de Configuración
+
+El sistema utiliza parámetros de configuración almacenados en la base de datos de parámetros para evitar valores definidos directamente dentro del código fuente y permitir mayor flexibilidad en el procesamiento de información.
+
+Estos parámetros permiten controlar aspectos importantes del análisis, como:
+
+* **Año inicial de procesamiento (`year_from`):** Permite establecer desde qué periodo histórico serán considerados los datos.
+
+* **Cantidad de registros mostrados (`top_n`):** Define el número de selecciones que serán incluidas en los rankings principales del Dashboard.
+
+* **Umbrales de evaluación (`min_avg_goals`):** Permite establecer valores mínimos utilizados para clasificar características de rendimiento ofensivo.
+
+El uso de parámetros dinámicos facilita la modificación de reglas de negocio sin necesidad de cambiar la lógica principal del programa.
+
+## Cálculo de Indicadores Clave de Rendimiento (KPIs)
+
+Durante la etapa de transformación se generan indicadores que permiten analizar el desempeño histórico de las selecciones participantes.
+
+Los principales KPIs generados son:
+
+* **Victorias acumuladas:** Representa la cantidad total de partidos ganados por cada selección dentro del periodo analizado.
+
+* **Índice de rendimiento:** Permite evaluar el desempeño general de los equipos combinando los resultados obtenidos durante sus participaciones históricas.
+
+* **Ranking de selecciones:** Organiza los equipos según sus indicadores obtenidos, permitiendo identificar las selecciones con mejores resultados.
+
+Estos indicadores convierten los datos históricos almacenados en información útil para realizar análisis comparativos mediante el Dashboard BI.
+
+## Decisiones Técnicas Implementadas
+
+Para el desarrollo de la solución se tomaron las siguientes decisiones técnicas:
+
+* Utilizar **Python** como lenguaje principal para el desarrollo del proceso ETL debido a su capacidad para realizar procesamiento de datos, conexión con bases de datos y automatización de tareas.
+
+* Utilizar **MySQL** como sistema gestor de bases de datos para almacenar la información operativa y analítica del proyecto.
+
+* Emplear la librería **Pandas** para la limpieza, transformación y cálculo de métricas debido a su eficiencia en el manejo de datos tabulares.
+
+* Implementar un Dashboard BI utilizando **Python y Plotly**, permitiendo representar los indicadores mediante gráficos interactivos y facilitar la interpretación de resultados.
+
+* Utilizar herramientas de orquestación como **Apache Airflow** para organizar la ejecución del flujo ETL y permitir procesos automatizados y repetibles.
+
+Estas decisiones permiten construir una solución organizada, escalable y orientada al análisis de información deportiva histórica.
 
 # 4. Evidencias de Ejecución (Valor: 1 pt)
 
-[*** NOTA IMPORTANTE PARA EVALUACIÓN: SECCIÓN EN PAUSA ***]
-*Los elementos de esta sección se completarán en la Fase 2, una vez que Alex ejecute el ETL, Irina monte Airflow y Jesús publique el Dashboard.*
+En esta sección se presentan las evidencias obtenidas durante la ejecución del sistema, demostrando el funcionamiento del proceso ETL, la generación de indicadores y la visualización mediante el Dashboard BI.
 
-## Evidencia 1: Ejecución del Script ETL y Generación de Reportes
-![Consola de comandos demostrando el éxito del script y la exportación del reporte](imagenes/captura_consola.png){width=85% fig-align="center"}
+## Ejecución del Proceso ETL
 
-## Evidencia 2: Tablas de KPIs Pobladas en MySQL (Servidor 2)
-![Verificación de las tablas de KPIs creadas y pobladas en el Servidor 2](imagenes/tablas_bi.png){width=85% fig-align="center"}
+La siguiente evidencia muestra la ejecución del proceso de extracción, transformación y carga de datos, donde se observa la conexión con las fuentes de información, procesamiento de datos y generación de resultados analíticos.
 
-## Evidencia 3: Dashboard BI con Mapas Especializados
-![Panel de Control funcional integrando visualizaciones interactivas avanzadas y mapas coropléticos](imagenes/dashboard.png){width=85% fig-align="center"}
+[Captura pendiente: ejecución del proceso ETL]
 
-# 5. Conclusiones y Formato (Valor: 0.5 pts)
+## Resultados Generados en la Base de Datos Analítica
 
-La implementación de esta arquitectura distribuida demuestra que la separación de entornos (producción vs. analítica) previene la sobrecarga de los sistemas de negocio. La automatización mediante Apache Airflow y las visualizaciones interactivas geoespaciales (mapas) aseguran que el Dashboard BI siempre disponga de información confiable, limpia y estructurada bajo estándares técnicos profesionales de ingeniería de sistemas.
+Se presenta la evidencia de los resultados almacenados en la base de datos `bi_db`, donde se encuentran los indicadores calculados utilizados posteriormente por el Dashboard BI.
+
+[Captura pendiente: tablas o resultados de KPIs generados]
+
+## Dashboard BI Funcionando
+
+La siguiente evidencia corresponde al Dashboard BI implementado, donde se muestran las visualizaciones interactivas generadas a partir de los KPIs obtenidos durante el proceso ETL.
+
+[Captura pendiente: Dashboard BI con gráficos y KPIs]
+
+
+# 5. Conclusiones
+
+El desarrollo del sistema de Inteligencia de Negocios permitió implementar un flujo completo de análisis de datos deportivos mediante una arquitectura distribuida, integrando bases de datos MySQL, procesamiento con Python y visualización mediante un Dashboard BI interactivo.
+
+La implementación del proceso ETL permitió transformar datos históricos de la Copa Mundial de Fútbol en información analítica mediante la extracción, procesamiento y carga de indicadores clave de rendimiento. El uso de parámetros de configuración permitió mejorar la flexibilidad del sistema, evitando depender de valores definidos directamente dentro del código.
+
+La aplicación de mecanismos como la idempotencia permitió garantizar ejecuciones controladas del proceso de procesamiento de datos, facilitando la automatización y actualización de la información analítica.
+
+Finalmente, el Dashboard BI desarrollado permitió representar los KPIs generados mediante gráficos interactivos, facilitando la interpretación de resultados y proporcionando una herramienta visual para comparar el rendimiento histórico de las selecciones.
