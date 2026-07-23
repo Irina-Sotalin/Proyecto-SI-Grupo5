@@ -25,20 +25,57 @@ def cargar_datos():
 
 df_rendimiento = cargar_datos()
 
+# ==========================
+# KPIs GENERALES (Aporte complementario)
+# ==========================
+total_selecciones = len(df_rendimiento)
+total_victorias = df_rendimiento["Victorias"].sum()
+promedio_indice = round(df_rendimiento["Indice_Rendimiento"].mean(), 2)
+
+
 # 2. DEFINIR LA INTERFAZ (UI)
 app_ui = ui.page_fluid(
     ui.h2("Dashboard BI - Análisis Histórico FIFA", class_="text-center mt-3 mb-4"),
+
+    # ==========================
+    # KPIs (Aporte complementario)
+    # ==========================
+    ui.layout_columns(
+        ui.value_box(
+            "Total de Selecciones",
+            str(total_selecciones),
+            showcase="🌎"
+        ),
+
+        ui.value_box(
+            "Victorias Totales",
+            str(total_victorias),
+            showcase="🏆"
+        ),
+
+        ui.value_box(
+            "Promedio Índice",
+            str(promedio_indice),
+            showcase="📈"
+        )
+    ),
+
     
     ui.layout_sidebar(
+
         ui.sidebar(
+
             ui.h4("Panel de Control"),
+
             ui.input_select(
                 "seleccion",
                 "Filtrar por Selección:",
                 choices=["Todas"] + df_rendimiento['Team'].tolist(),
                 selected="Todas"
             ),
+
             ui.hr(),
+
             ui.p("Datos procesados desde el Servidor 2 (ETL).")
         ),
         
@@ -52,7 +89,13 @@ app_ui = ui.page_fluid(
         ui.card(
             ui.h4("Top Selecciones (Victorias e Índice)"),
             output_widget("grafico_barras")
-        )
+        ),
+
+	#Tarjeta complementaria Grafco de dispersion----------------------
+	ui.card(
+    		ui.h4("Relación entre Victorias e Índice de Rendimiento"),
+   		 output_widget("grafico_dispersion")
+	)
     )
 )
 
@@ -83,6 +126,7 @@ def server(input, output, session):
         
     @render_plotly
     def grafico_barras():
+
         df_plot = datos_filtrados()
         df_plot = df_plot.sort_values(by='Victorias', ascending=False).head(10)
         
@@ -94,6 +138,29 @@ def server(input, output, session):
             labels={'Team': 'Selección', 'Victorias': 'Total Victorias', 'Indice_Rendimiento': 'Índice KPI'}
         )
         return fig
+
+    #Complementario Grafico de dispersion
+    @render_plotly
+    def grafico_dispersion():
+
+        df_plot = datos_filtrados()
+
+        fig = px.scatter(
+            df_plot,
+            x="Victorias",
+            y="Indice_Rendimiento",
+            text="Team",
+            color="Victorias",
+            size="Victorias",
+            title="Victorias vs Índice de Rendimiento"
+        )
+
+        fig.update_traces(textposition="top center")
+
+        return fig
+
+
+
 
 # 4. LEVANTAR LA APLICACIÓN
 app = App(app_ui, server)
