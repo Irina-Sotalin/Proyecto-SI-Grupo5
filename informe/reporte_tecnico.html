@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-07-23">
+
+<title>Informe Técnico: Sistema de Análisis e Inteligencia de Negocios - FIFA</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="reporte_tecnico_files/libs/clipboard/clipboard.min.js"></script>
+<script src="reporte_tecnico_files/libs/quarto-html/quarto.js"></script>
+<script src="reporte_tecnico_files/libs/quarto-html/popper.min.js"></script>
+<script src="reporte_tecnico_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="reporte_tecnico_files/libs/quarto-html/anchor.min.js"></script>
+<link href="reporte_tecnico_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="reporte_tecnico_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="reporte_tecnico_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="reporte_tecnico_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="reporte_tecnico_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="reporte_tecnico.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Informe Técnico: Sistema de Análisis e Inteligencia de Negocios - FIFA</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p> </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 23, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="objetivos-del-proyecto" class="level1">
+<h1>1. Objetivos del Proyecto</h1>
+<section id="objetivo-general" class="level2">
+<h2 class="anchored" data-anchor-id="objetivo-general">Objetivo General</h2>
+<p>Implementar un sistema de Inteligencia de Negocios basado en un proceso ETL automatizado para el análisis de datos históricos de la Copa Mundial de Fútbol, permitiendo la extracción, transformación y carga de información mediante Python y MySQL, con la finalidad de generar indicadores clave de rendimiento (KPIs) y visualizarlos mediante un Dashboard BI interactivo para facilitar el análisis deportivo.</p>
+</section>
+<section id="objetivos-específicos" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-específicos">Objetivos Específicos</h2>
+<ul>
+<li><p>Diseñar una arquitectura distribuida utilizando bases de datos y servidores independientes para separar la información operativa del procesamiento analítico.</p></li>
+<li><p>Implementar un proceso ETL mediante Python que permita extraer datos históricos de la FIFA, aplicar transformaciones y calcular indicadores de rendimiento deportivo.</p></li>
+<li><p>Utilizar parámetros de configuración dinámicos para controlar el procesamiento de datos y evitar valores definidos directamente dentro del código fuente.</p></li>
+<li><p>Automatizar la ejecución del flujo de procesamiento mediante herramientas de orquestación, garantizando una ejecución organizada y repetible del proceso ETL.</p></li>
+<li><p>Construir un Dashboard BI interactivo que permita visualizar los KPIs generados mediante gráficos especializados y elementos visuales para el análisis de resultados históricos.</p></li>
+</ul>
+</section>
+</section>
+<section id="arquitectura-y-diseño-de-la-solución-valor-1.5-pts" class="level1">
+<h1>2. Arquitectura y Diseño de la Solución (Valor: 1.5 pts)</h1>
+<section id="diagrama-de-arquitectura" class="level2">
+<h2 class="anchored" data-anchor-id="diagrama-de-arquitectura">Diagrama de Arquitectura</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagenes/arquitectura.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Arquitectura General del Sistema Distribuido</figcaption>
+</figure>
+</div>
+</section>
+<section id="explicación-del-flujo-etl" class="level2">
+<h2 class="anchored" data-anchor-id="explicación-del-flujo-etl">Explicación del Flujo ETL</h2>
+<p>La solución implementada utiliza una arquitectura distribuida compuesta por servidores Linux Ubuntu, bases de datos MySQL y herramientas de procesamiento desarrolladas en Python.</p>
+<p>El flujo general del sistema se divide en las siguientes etapas:</p>
+<ol type="1">
+<li><p><strong>Extracción de datos:</strong></p>
+<p>El proceso ETL inicia mediante la conexión hacia la base de datos que contiene la información histórica de la Copa Mundial de Fútbol. Los datos son extraídos utilizando Python junto con librerías de conexión a bases de datos, permitiendo obtener la información necesaria para el análisis.</p></li>
+<li><p><strong>Transformación de datos:</strong></p>
+<p>Una vez obtenidos los datos, se aplican procesos de limpieza, filtrado y transformación utilizando la librería Pandas. En esta etapa se calculan los indicadores clave de rendimiento (KPIs), como estadísticas de victorias e índices de rendimiento de las selecciones.</p></li>
+<li><p><strong>Carga de información analítica:</strong></p></li>
+</ol>
+</section>
+</section>
+<section id="explicación-técnico-analítica-valor-1-pt" class="level1">
+<h1>3. Explicación Técnico-Analítica (Valor: 1 pt)</h1>
+<section id="proceso-etl-implementado" class="level2">
+<h2 class="anchored" data-anchor-id="proceso-etl-implementado">Proceso ETL Implementado</h2>
+<p>El sistema desarrollado implementa un proceso ETL (Extract, Transform, Load) encargado de obtener información histórica de la Copa Mundial de Fútbol, procesarla y almacenarla en una base de datos analítica para su posterior visualización mediante un Dashboard BI.</p>
+<p>La etapa de <strong>extracción</strong> consiste en la obtención de los datos históricos almacenados en la base de datos FIFA. Mediante scripts desarrollados en Python se realiza la conexión hacia la fuente de información y se recuperan los registros necesarios para el análisis de rendimiento de las selecciones.</p>
+<p>En la etapa de <strong>transformación</strong>, los datos obtenidos son procesados utilizando librerías especializadas como Pandas. Durante esta fase se aplican filtros, limpieza de información y cálculos estadísticos necesarios para generar indicadores de rendimiento deportivo. Además, se utilizan parámetros de configuración para controlar dinámicamente las reglas del procesamiento.</p>
+<p>La etapa de <strong>carga</strong> permite almacenar los resultados procesados dentro de la base de datos analítica <code>bi_db</code>, donde se encuentran las estructuras utilizadas posteriormente por el Dashboard BI para la generación de visualizaciones interactivas.</p>
+</section>
+<section id="control-de-ejecuciones-e-idempotencia" class="level2">
+<h2 class="anchored" data-anchor-id="control-de-ejecuciones-e-idempotencia">Control de Ejecuciones e Idempotencia</h2>
+<p>El proceso ETL fue diseñado considerando el principio de idempotencia, permitiendo ejecutar nuevamente el flujo de procesamiento sin generar duplicidad de información ni afectar la consistencia de los datos almacenados.</p>
+<p>Para lograr este comportamiento, la carga de información analítica mantiene una estructura controlada de actualización de resultados. De esta manera, cuando el proceso se ejecuta nuevamente bajo los mismos parámetros de configuración, se obtiene el mismo resultado esperado.</p>
+<p>La aplicación de este principio facilita la automatización del proceso ETL mediante herramientas de orquestación, permitiendo realizar ejecuciones programadas de manera segura y confiable.</p>
+</section>
+<section id="uso-de-parámetros-de-configuración" class="level2">
+<h2 class="anchored" data-anchor-id="uso-de-parámetros-de-configuración">Uso de Parámetros de Configuración</h2>
+<p>El sistema utiliza parámetros de configuración almacenados en la base de datos de parámetros para evitar valores definidos directamente dentro del código fuente y permitir mayor flexibilidad en el procesamiento de información.</p>
+<p>Estos parámetros permiten controlar aspectos importantes del análisis, como:</p>
+<ul>
+<li><p><strong>Año inicial de procesamiento (<code>year_from</code>):</strong> Permite establecer desde qué periodo histórico serán considerados los datos.</p></li>
+<li><p><strong>Cantidad de registros mostrados (<code>top_n</code>):</strong> Define el número de selecciones que serán incluidas en los rankings principales del Dashboard.</p></li>
+<li><p><strong>Umbrales de evaluación (<code>min_avg_goals</code>):</strong> Permite establecer valores mínimos utilizados para clasificar características de rendimiento ofensivo.</p></li>
+</ul>
+<p>El uso de parámetros dinámicos facilita la modificación de reglas de negocio sin necesidad de cambiar la lógica principal del programa.</p>
+</section>
+<section id="cálculo-de-indicadores-clave-de-rendimiento-kpis" class="level2">
+<h2 class="anchored" data-anchor-id="cálculo-de-indicadores-clave-de-rendimiento-kpis">Cálculo de Indicadores Clave de Rendimiento (KPIs)</h2>
+<p>Durante la etapa de transformación se generan indicadores que permiten analizar el desempeño histórico de las selecciones participantes.</p>
+<p>Los principales KPIs generados son:</p>
+<ul>
+<li><p><strong>Victorias acumuladas:</strong> Representa la cantidad total de partidos ganados por cada selección dentro del periodo analizado.</p></li>
+<li><p><strong>Índice de rendimiento:</strong> Permite evaluar el desempeño general de los equipos combinando los resultados obtenidos durante sus participaciones históricas.</p></li>
+<li><p><strong>Ranking de selecciones:</strong> Organiza los equipos según sus indicadores obtenidos, permitiendo identificar las selecciones con mejores resultados.</p></li>
+</ul>
+<p>Estos indicadores convierten los datos históricos almacenados en información útil para realizar análisis comparativos mediante el Dashboard BI.</p>
+</section>
+<section id="decisiones-técnicas-implementadas" class="level2">
+<h2 class="anchored" data-anchor-id="decisiones-técnicas-implementadas">Decisiones Técnicas Implementadas</h2>
+<p>Para el desarrollo de la solución se tomaron las siguientes decisiones técnicas:</p>
+<ul>
+<li><p>Utilizar <strong>Python</strong> como lenguaje principal para el desarrollo del proceso ETL debido a su capacidad para realizar procesamiento de datos, conexión con bases de datos y automatización de tareas.</p></li>
+<li><p>Utilizar <strong>MySQL</strong> como sistema gestor de bases de datos para almacenar la información operativa y analítica del proyecto.</p></li>
+<li><p>Emplear la librería <strong>Pandas</strong> para la limpieza, transformación y cálculo de métricas debido a su eficiencia en el manejo de datos tabulares.</p></li>
+<li><p>Implementar un Dashboard BI utilizando <strong>Python y Plotly</strong>, permitiendo representar los indicadores mediante gráficos interactivos y facilitar la interpretación de resultados.</p></li>
+<li><p>Utilizar herramientas de orquestación como <strong>Apache Airflow</strong> para organizar la ejecución del flujo ETL y permitir procesos automatizados y repetibles.</p></li>
+</ul>
+<p>Estas decisiones permiten construir una solución organizada, escalable y orientada al análisis de información deportiva histórica.</p>
+</section>
+</section>
+<section id="evidencias-de-ejecución-valor-1-pt" class="level1">
+<h1>4. Evidencias de Ejecución (Valor: 1 pt)</h1>
+<p>En esta sección se presentan las evidencias obtenidas durante la ejecución del sistema, demostrando el funcionamiento del proceso ETL, la generación de indicadores y la visualización mediante el Dashboard BI.</p>
+<section id="ejecución-del-proceso-etl" class="level2">
+<h2 class="anchored" data-anchor-id="ejecución-del-proceso-etl">Ejecución del Proceso ETL</h2>
+<p>La siguiente evidencia muestra la ejecución del proceso de extracción, transformación y carga de datos, donde se observa la conexión con las fuentes de información, procesamiento de datos y generación de resultados analíticos.</p>
+<p>[Captura pendiente: ejecución del proceso ETL]</p>
+</section>
+<section id="resultados-generados-en-la-base-de-datos-analítica" class="level2">
+<h2 class="anchored" data-anchor-id="resultados-generados-en-la-base-de-datos-analítica">Resultados Generados en la Base de Datos Analítica</h2>
+<p>Se presenta la evidencia de los resultados almacenados en la base de datos <code>bi_db</code>, donde se encuentran los indicadores calculados utilizados posteriormente por el Dashboard BI.</p>
+<p>[Captura pendiente: tablas o resultados de KPIs generados]</p>
+</section>
+<section id="dashboard-bi-funcionando" class="level2">
+<h2 class="anchored" data-anchor-id="dashboard-bi-funcionando">Dashboard BI Funcionando</h2>
+<p>La siguiente evidencia corresponde al Dashboard BI implementado, donde se muestran las visualizaciones interactivas generadas a partir de los KPIs obtenidos durante el proceso ETL.</p>
+<p>[Captura pendiente: Dashboard BI con gráficos y KPIs]</p>
+</section>
+</section>
+<section id="conclusiones" class="level1">
+<h1>5. Conclusiones</h1>
+<p>El desarrollo del sistema de Inteligencia de Negocios permitió implementar un flujo completo de análisis de datos deportivos mediante una arquitectura distribuida, integrando bases de datos MySQL, procesamiento con Python y visualización mediante un Dashboard BI interactivo.</p>
+<p>La implementación del proceso ETL permitió transformar datos históricos de la Copa Mundial de Fútbol en información analítica mediante la extracción, procesamiento y carga de indicadores clave de rendimiento. El uso de parámetros de configuración permitió mejorar la flexibilidad del sistema, evitando depender de valores definidos directamente dentro del código.</p>
+<p>La aplicación de mecanismos como la idempotencia permitió garantizar ejecuciones controladas del proceso de procesamiento de datos, facilitando la automatización y actualización de la información analítica.</p>
+<p>Finalmente, el Dashboard BI desarrollado permitió representar los KPIs generados mediante gráficos interactivos, facilitando la interpretación de resultados y proporcionando una herramienta visual para comparar el rendimiento histórico de las selecciones.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
