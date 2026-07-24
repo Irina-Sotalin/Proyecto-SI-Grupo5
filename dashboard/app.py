@@ -137,7 +137,7 @@ app_ui = ui.page_sidebar(
         width=330
     ),
     
-    # Estructura de pestañas sugerida
+    # Estructura de pestañas
     ui.navset_tab(
         
         # Pestaña 1: KPIs Externos
@@ -228,21 +228,24 @@ def server(input, output, session):
             return df_rendimiento
         return df_rendimiento[df_rendimiento["Team"] == pais]
 
-    # Métricas generales
+    # --- Métricas Generales (Con unidades explícitas) ---
     @render.text
     def txt_total_paises():
-        return f"{len(df_filtrado())}"
+        total = len(df_filtrado())
+        return f"{total} Países" if total != 1 else "1 País"
 
     @render.text
     def txt_total_victorias():
-        return f"{df_filtrado()['Victorias'].sum():,}"
+        total = df_filtrado()['Victorias'].sum()
+        return f"{total:,} Victorias" if total != 1 else "1 Victoria"
 
     @render.text
     def txt_promedio_rendimiento():
         df = df_filtrado()
         if len(df) == 0:
-            return "0.0"
-        return f"{df['Indice_Rendimiento'].mean():.2f}"
+            return "0.00 pts"
+        prom = df['Indice_Rendimiento'].mean()
+        return f"{prom:.2f} / 2.00 pts"
 
     # Pestaña 1: KPIs Externos
     @render_plotly
