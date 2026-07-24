@@ -4,6 +4,13 @@
     "href": "index.html",
     "title": "Dashboard BI - Análisis Histórico FIFA",
     "section": "",
-    "text": "Dashboard BI - Análisis Histórico FIFA\nBienvenido al proyecto de sistemas de información. Puedes acceder a la documentación y reportes del grupo."
+    "text": "Bienvenido al proyecto de sistemas de información del Grupo 5 (EPN). Este portal recopila los resultados del proceso ETL automatizado mediante Airflow, la persistencia en bases de datos relacionales y la visualización interactiva.\n\n\n\nETL Automatizado: Extracción y limpieza masiva de estadísticas históricas de la FIFA.\nBase de Datos Analítica: Almacenamiento centralizado optimizado para consultas de Inteligencia de Negocios.\nDashboard Interactivo: Desarrollado en Shiny con mapas coropléticos mundiales y KPIs de rendimiento.\n\n\nNota de Defensa: El panel interactivo principal corre localmente en el puerto 8000 mediante Shiny, mientras que este sitio en GitHub Pages documenta la arquitectura técnica y el informe oficial del grupo."
+  },
+  {
+    "objectID": "index.html#resumen-del-proyecto",
+    "href": "index.html#resumen-del-proyecto",
+    "title": "Dashboard BI - Análisis Histórico FIFA",
+    "section": "",
+    "text": "Bienvenido al proyecto de sistemas de información del Grupo 5 (EPN). Este portal recopila los resultados del proceso ETL automatizado mediante Airflow, la persistencia en bases de datos relacionales y la visualización interactiva.\n\n\n\nETL Automatizado: Extracción y limpieza masiva de estadísticas históricas de la FIFA.\nBase de Datos Analítica: Almacenamiento centralizado optimizado para consultas de Inteligencia de Negocios.\nDashboard Interactivo: Desarrollado en Shiny con mapas coropléticos mundiales y KPIs de rendimiento.\n\n\nNota de Defensa: El panel interactivo principal corre localmente en el puerto 8000 mediante Shiny, mientras que este sitio en GitHub Pages documenta la arquitectura técnica y el informe oficial del grupo."
   }
 ]
